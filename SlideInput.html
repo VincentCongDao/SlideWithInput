@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css" />
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="bootstrap.js"></script>
+
+    <style>
+        .rangeslider,
+        h1 {
+            user-select: none;
+        }
+
+        /* Price slider */
+        .rangeslider,
+        .rangeslider__fill {
+            display: block;
+            -moz-border-radius: 10px;
+            -webkit-border-radius: 10px;
+            border-radius: 10px;
+        }
+
+        .rangeslider {
+            background: #e6e6e6;
+            position: relative;
+        }
+
+        .rangeslider--horizontal {
+            height: 1px;
+            width: 100%;
+        }
+
+        .rangeslider--disabled {
+            filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=40);
+            opacity: 0.4;
+        }
+
+        .rangeslider__fill {
+            background: #6b0510e3;
+            position: absolute;
+        }
+
+        .rangeslider--horizontal .rangeslider__fill {
+            top: 0;
+            height: 100%;
+        }
+
+        .rangeslider__handle {
+            background: #910a18;
+            color: #ffffff;
+            cursor: pointer;
+            display: inline-block;
+            width: 2em;
+            height: 1.5em;
+            position: absolute;
+            -moz-border-radius: 22px;
+            -webkit-border-radius: 22px;
+            border-radius: 22px;
+            text-align: center;
+        }
+
+        .rangeslider--horizontal .rangeslider__handle {
+            top: -15px;
+            touch-action: pan-y;
+            -ms-touch-action: pan-y;
+        }
+
+        input[type="range"]:focus+.rangeslider .rangeslider__handle {
+            -moz-box-shadow: 0 0 8px rgba(255, 0, 255, 0.9);
+            -webkit-box-shadow: 0 0 8px rgba(255, 0, 255, 0.9);
+            box-shadow: 0 0 8px rgba(255, 0, 255, 0.9);
+        }
+
+        .resultInput {
+            margin-top: 25px;
+            text-align: center;
+            width: 100px;
+            border-radius: 10px;
+        }
+
+        .range {
+            position: relative;
+            width: 640px;
+            height: 5px;
+        }
+
+        .range .range-btn {
+            width: 100%;
+            position: absolute;
+            top: 2px;
+            height: 0;
+            -webkit-appearance: none;
+        }
+
+        .range .range-btn::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            margin: -8px 0 0;
+            border-radius: 50%;
+            background: #930000 !important;
+            cursor: pointer;
+            border: 0 !important;
+        }
+
+        .range .range-btn::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            margin: -8px 0 0;
+            border-radius: 50%;
+            background: #930000;
+            cursor: pointer;
+            border: 0 !important;
+        }
+
+        .range .range-btn::-ms-thumb {
+            width: 18px;
+            height: 18px;
+            margin: -8px 0 0;
+            border-radius: 50%;
+            background: #930000;
+            cursor: pointer;
+            border: 0 !important;
+        }
+
+        .range .range-btn::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 2px;
+            cursor: pointer;
+            background: #b2b2b2;
+        }
+
+        .range .range-btn::-moz-range-track {
+            width: 100%;
+            height: 2px;
+            cursor: pointer;
+            background: #b2b2b2;
+        }
+
+        .range .range-btn::-ms-track {
+            width: 100%;
+            height: 2px;
+            cursor: pointer;
+            background: #b2b2b2;
+        }
+
+        .range .range-btn:focus {
+            background: none;
+            outline: none;
+        }
+
+        .range .range-btn::-ms-track {
+            width: 100%;
+            cursor: pointer;
+            background: transparent;
+            border-color: transparent;
+            color: transparent;
+        }
+
+        .range-labels {
+            margin: 18px -41px 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .range-labels li {
+            position: relative;
+            float: left;
+            width: 90.25px;
+            text-align: center;
+            color: #b2b2b2;
+            font-size: 14px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .range-labels li::before {
+            position: absolute;
+            top: -25px;
+            right: 0;
+            left: 0;
+            content: "";
+            margin: 0 auto;
+            width: 9px;
+            height: 9px;
+            background: lightgray;
+            border-radius: 50%;
+        }
+
+        .range-labels .active {
+            color: black;
+        }
+
+        .range-labels .selected::before {
+            background: lightgray;
+        }
+
+        .range-labels .active.selected::before {
+            display: none;
+        }
+
+        .btn:focus {
+            background-color: #930000;
+            color: white;
+        }
+
+        .select-method {
+            display: inline-block;
+            width: 40%;
+        }
+
+        .btn-container {
+            margin-top: 75px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="user-input">
+        <div class="container" style="margin-top: 40px;">
+            <div class="row text-center">
+                <div class="row">
+                    <h4>Hours per Day</h4>
+                    <div class="col-xs-10 col-xs-offset-1">
+                        <!-- As seen here https://bootsnipp.com/snippets/featured/bootstrap-pricing-slider-donations -->
+
+                        <input id="hourslider" class="slider_slider" type="range" min="1" max="24" step="1" value="8"
+                            onchange="updateTextInput(this.value); " name="hourslider" />
+                        <input class="result resultInput" type="number" id="hourInput" value="" min="1" max="24"
+                            placeholder="1-24" name="hourinput" onkeyup ="updateTotal();" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container" style="margin-top: 40px;">
+            <div class="row text-center">
+                <div class="row">
+                    <h4>Frame per Second (FPS)</h4>
+                    <div class="col-xs-10 col-xs-offset-1">
+
+                        <input id="fpslider" class="slider_slider" type="range" min="1" max="60" step="1" value="15"
+                            onchange="updateFPSInput(this.value);" />
+                        <input class="result resultInput" type="number" id="fpsInput" min="1" max="60"
+                            placeholder="1-60" onkeyup ="updateTotal();" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container" style="margin-top: 40px;">
+            <div class="row text-center">
+                <div class="row">
+                    <h4>Channel(s) ( Camera )</h4>
+                    <div class="col-xs-10 col-xs-offset-1">
+                        <!-- As seen here https://bootsnipp.com/snippets/featured/bootstrap-pricing-slider-donations -->
+                        <input id="channelslider" class="slider_slider" type="range" min="1" max="128" step="1"
+                            value="1" onchange="updateChannelsInput(this.value); " />
+                        <input class="result resultInput" type="number" id="channelsinput" value="" min="1" max="128"
+                            placeholder="1-128" onkeyup="updateTotal();" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container" style="margin-top: 40px;">
+            <div class="row text-center">
+                <div class="row">
+                    <h4>Day(s)</h4>
+                    <div class="col-xs-10 col-xs-offset-1">
+                        <!-- As seen here https://bootsnipp.com/snippets/featured/bootstrap-pricing-slider-donations -->
+                        <input id="dayslider" class="slider_slider" type="range" min="1" max="365" step="1" value="1"
+                            onchange="updateDaysInput(this.value);" />
+                        <input id="dayinput" class="result resultInput" type="number" value="" min="1" max="365"
+                            placeholder="1-365" onkeyup=" updateTotal();" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+  
+    </div>
+
+</body>
+<script src="rangeslider.js"></script>
+<script src="rangeslider.min.js"></script>
+<script>
+    //button
+    var sheet = document.createElement('style'),
+        $rangeInput1 = $('.range .range-btn'),
+        prefs = ['webkit-slider-runnable-track', 'moz-range-track', 'ms-track'];
+
+    document.body.appendChild(sheet);
+
+    var getTrackStyle = function (el) {
+        var curVal = el.value,
+            val = (curVal - 1),
+            style = '';
+
+
+        // Set active label
+        $('.range-labels li').removeClass('active selected');
+
+        var curLabel = $('.range-labels').find('li:nth-child(' + curVal + ')');
+
+        curLabel.addClass('active selected');
+        curLabel.prevAll().addClass('selected');
+
+
+
+        return style;
+    }
+
+
+    $rangeInput1.on('input', function () {
+        sheet.textContent = getTrackStyle(this);
+    });
+
+    // Change input value on label click
+    $('.range-labels li').on('click', function () {
+        var index = $(this).index();
+
+        $rangeInput1.val(index + 1).trigger('input');
+
+    });
+
+    var sheet = document.createElement('style'),
+        $rangeInput1 = $('.range input'),
+        prefs = ['webkit-slider-runnable-track', 'moz-range-track', 'ms-track'];
+
+    document.body.appendChild(sheet);
+
+    var getTrackStyle = function (el) {
+        var curVal = el.value,
+            val = (curVal - 1),
+            style = '';
+
+
+        // Set active label
+        $('.range-labels li').removeClass('active selected');
+
+        var curLabel = $('.range-labels').find('li:nth-child(' + curVal + ')');
+
+        curLabel.addClass('active selected');
+        curLabel.prevAll().addClass('selected');
+
+        return style;
+    }
+
+
+    $rangeInput1.on('input', function () {
+        sheet.textContent = getTrackStyle(this);
+    });
+
+    // Change input value on label click
+    $('.range-labels li').on('click', function () {
+        var index = $(this).index();
+
+        $rangeInput1.val(index + 1).trigger('input');
+
+    });
+
+    //get the slider
+    var $element = $('.slider_slider');
+
+
+    // list id name for each slider
+    var $rangeslider = $("#dayslider"); // day slider
+    var $channel = $('#channelslider'); // channel slider
+    var $fps = $('#fpslider'); //fps slider
+    var $hourInput = $('#hourInput'); // hours input
+
+
+    var $amount = $("#dayinput"); // day input
+    var $channelinput = $('#channelsinput'); // channel input
+    var $fpsInput = $('#fpsInput'); // fps input
+    var $hour = $('#hourslider'); // hours slider
+
+    // slider
+    $element.rangeslider({
+            polyfill: false,
+            onInit: function () {
+                this.$handle = this.$range.find(".rangeslider__handle")
+                    .text(this.value)
+
+            },
+            onSlide: function (_, value) {
+                this.$handle.text(value);
+            }
+        })
+        //Allow the input(range) change by input(text or number)
+        //Days
+        .on("input", function () {
+            $amount[0].value = $rangeslider[0].value;
+        });
+    $amount.on("input", function () {
+            $rangeslider
+                .val(this.value)
+                .change();
+        })
+        //Channels
+        .on("input", function () {
+            $channelinput[0].value = $channel[0].value;
+        });
+    $channelinput.on("input", function () {
+            $channel
+                .val(this.value)
+                .change();
+        })
+        //Fps
+        .on("input", function () {
+            $fps[0].value = $fpsInput[0].value;
+        });
+    $fpsInput.on("input", function () {
+            $fps
+                .val(this.value)
+                .change();
+        })
+        //Hours
+        .on("input", function () {
+            $hour[0].value = $hourInput[0].value;
+        });
+    $hourInput.on("input", function () {
+        $hour
+            .val(this.value)
+            .change();
+    })
+
+    // update the input for the hours
+    function updateTextInput(val) {
+        document.getElementById("hourInput").value = val;
+    }
+    //update the input for the frame rate
+    function updateFPSInput(val) {
+        document.getElementById("fpsInput").value = val;
+    }
+    //update the input for the channels
+    function updateChannelsInput(val) {
+        document.getElementById("channelsinput").value = val;
+    }
+    //update the input for the days
+    function updateDaysInput(val) {
+        document.getElementById("dayinput").value = val;
+    }
+
+
+    //days amount cap
+    $("#dayinput").on("keyup keydown", function (e) {
+        console.log($(this).val() > 365);
+        if ($(this).val() > 365) {
+            e.preventDefault();
+            $(this).val(365);
+        }
+    });
+    // channels amount cap
+    $("#channels").on("keyup keydown", function (e) {
+        console.log($(this).val() > 128);
+        if ($(this).val() > 128) {
+            e.preventDefault();
+            $(this).val(128);
+        }
+    });
+
+    // fps ammount cap
+    $("#fpsInput").on("keyup keydown", function (e) {
+        console.log($(this).val() > 60);
+        if ($(this).val() > 60) {
+            e.preventDefault();
+            $(this).val(60);
+        }
+    });
+
+    //hours amount cap
+    $("#hourInput").on("keyup keydown", function (e) {
+        console.log($(this).val() > 24);
+        if ($(this).val() > 24) {
+            e.preventDefault();
+            $(this).val(24);
+        }
+    });
+
+</script>
+
+</html>
